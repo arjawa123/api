@@ -84,13 +84,15 @@ app.post("/api/donate", async (req, res) => {
       callback_url: callbackUrl
     }, site);
 
+    const payableAmount = payment.amount || roundedAmount;
+
     await upsertDonation({
       order_id: payment.order_id || orderId,
       transaction_id: payment.transaction_id,
       site_id: site.id,
       site_name: site.name,
       site_url: site.frontendUrl,
-      amount: payment.amount || roundedAmount,
+      amount: roundedAmount,
       status: "pending",
       donor_name: donorName || null,
       donor_email: donorEmail,
@@ -105,7 +107,8 @@ app.post("/api/donate", async (req, res) => {
       transaction_id: payment.transaction_id,
       order_id: payment.order_id || orderId,
       site_id: site.id,
-      amount: payment.amount || roundedAmount,
+      amount: roundedAmount,
+      payable_amount: payableAmount,
       qris_url: payment.qris_url,
       qris_string: payment.qris_string,
       expires_at: payment.expires_at,
