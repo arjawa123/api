@@ -13,16 +13,20 @@ const defaultSite = sites[0];
 
 app.set("trust proxy", true);
 
-const corsOrigins = getCorsOrigins(sites);
+const corsRules = buildCorsRules(sites);
 
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || corsOrigins.has("*") || corsOrigins.has(origin)) {
+      if (!origin) {
         return callback(null, true);
       }
 
-      return callback(new Error("Origin is not allowed by CORS"));
+      if (isOriginAllowed(origin, corsRules)) {
+        return callback(null, true);
+      }
+
+      return callback(null, false);
     }
   })
 );
@@ -116,6 +120,13 @@ app.post("/api/donate", async (req, res) => {
     });
   } catch (error) {
     console.error("qris.pw create payment error:", error);
+
+    if (error?.statusCode === 403) {
+      return res.status(502).json({
+        error: "Payment gateway rejected the request (HTTP 403). Check API key/secret and allowed server IP/domain on qris.pw."
+      });
+    }
+
     return res.status(500).json({ error: "Internal Server Error during payment processing" });
   }
 });
@@ -262,7 +273,10 @@ async function qrisFetch(path, options = {}, site = defaultSite) {
   const result = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(result.error || `qris.pw returned HTTP ${response.status}`);
+    const error = new Error(result.error || `qris.pw returned HTTP ${response.status}`);
+    error.statusCode = response.status;
+    error.responseBody = result;
+    throw error;
   }
 
   return result;
@@ -404,15 +418,88 @@ function normalizeSiteConfig(site) {
   };
 }
 
-function getCorsOrigins(donationSites) {
-  const origins = new Set(parseCsv(process.env.CORS_ORIGIN));
+function buildCorsRules(donationSites) {
+  const rawOrigins = new Set(parseCsv(process.env.CORS_ORIGIN));
 
   for (const site of donationSites) {
-    for (const origin of site.origins) origins.add(origin);
+    for (const origin of site.origins) rawOrigins.add(origin);
   }
 
-  if (!origins.size) origins.add("*");
-  return origins;
+  if (!rawOrigins.size) rawOrigins.add("*");
+
+  const exactOrigins = new Set();
+  const wildcardDomains = new Set();
+  let allowAll = false;
+
+  for (const rawOrigin of rawOrigins) {
+    const normalized = normalizeOriginRule(rawOrigin);
+    if (!normalized) continue;
+
+    if (normalized === "*") {
+      allowAll = true;
+      continue;
+    }
+
+    if (normalized.startsWith("*.")) {
+      wildcardDomains.add(normalized.slice(2));
+      continue;
+    }
+
+    exactOrigins.add(normalized);
+  }
+
+  return { allowAll, exactOrigins, wildcardDomains };
+}
+
+function isOriginAllowed(requestOrigin, rules) {
+  const normalizedOrigin = normalizeUrlOrigin(requestOrigin);
+  if (!normalizedOrigin) return false;
+
+  if (rules.allowAll || rules.exactOrigins.has(normalizedOrigin)) {
+    return true;
+  }
+
+  if (!rules.wildcardDomains.size) {
+    return false;
+  }
+
+  let hostname;
+  try {
+    hostname = new URL(normalizedOrigin).hostname.toLowerCase();
+  } catch {
+    return false;
+  }
+
+  for (const domain of rules.wildcardDomains) {
+    if (hostname === domain || hostname.endsWith(`.${domain}`)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function normalizeOriginRule(value) {
+  if (typeof value !== "string") return "";
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  if (trimmed === "*") return "*";
+
+  if (trimmed.startsWith("*.")) {
+    return trimmed.toLowerCase();
+  }
+
+  return normalizeUrlOrigin(trimmed);
+}
+
+function normalizeUrlOrigin(value) {
+  if (typeof value !== "string") return "";
+
+  try {
+    return new URL(value.trim()).origin.toLowerCase();
+  } catch {
+    return "";
+  }
 }
 
 function resolveDonationSite(req, { allowDefault = false } = {}) {
