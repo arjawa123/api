@@ -1,6 +1,6 @@
 :root {
-  color: #17211b;
-  background: #f4f7f1;
+  color: #111111;
+  background: #f4f4f4;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -16,6 +16,7 @@ body {
 }
 
 button,
+a,
 input,
 textarea {
   font: inherit;
@@ -23,10 +24,7 @@ textarea {
 
 .page-shell {
   align-items: center;
-  background:
-    linear-gradient(120deg, rgba(48, 104, 82, 0.14), rgba(244, 247, 241, 0) 38%),
-    linear-gradient(300deg, rgba(196, 108, 64, 0.14), rgba(244, 247, 241, 0) 34%),
-    #f4f7f1;
+  background: #f4f4f4;
   display: flex;
   min-height: 100vh;
   padding: 32px;
@@ -46,36 +44,34 @@ textarea {
   padding-right: 24px;
 }
 
-.brand-mark {
-  align-items: center;
-  background: #22624a;
-  border-radius: 8px;
-  color: white;
-  display: inline-flex;
-  height: 48px;
-  justify-content: center;
-  width: 48px;
-}
-
 .eyebrow {
-  color: #6d5b42;
+  color: #555555;
   font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0;
-  margin: 28px 0 12px;
+  margin: 0 0 12px;
   text-transform: uppercase;
 }
 
 h1 {
-  font-size: clamp(2.4rem, 7vw, 5rem);
-  line-height: 0.98;
+  font-size: clamp(2.05rem, 5.2vw, 4rem);
+  line-height: 1.03;
   letter-spacing: 0;
   margin: 0;
   max-width: 720px;
+  overflow-wrap: anywhere;
+}
+
+h2 {
+  font-size: clamp(1.85rem, 5vw, 2.55rem);
+  line-height: 1.08;
+  letter-spacing: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .lead {
-  color: #526158;
+  color: #4f4f4f;
   font-size: 1.08rem;
   line-height: 1.7;
   margin: 24px 0;
@@ -90,26 +86,28 @@ h1 {
 
 .trust-row span {
   align-items: center;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(34, 98, 74, 0.16);
+  background: #ffffff;
+  border: 1px solid #d8d8d8;
   border-radius: 8px;
+  color: #222222;
   display: inline-flex;
   gap: 8px;
   padding: 10px 12px;
 }
 
 .donation-form,
-.payment-view {
-  background: rgba(255, 255, 255, 0.82);
-  border: 1px solid rgba(34, 98, 74, 0.16);
+.payment-view,
+.thank-you-view {
+  background: #ffffff;
+  border: 1px solid #dedede;
   border-radius: 8px;
-  box-shadow: 0 24px 70px rgba(28, 49, 38, 0.12);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
   padding: 24px;
 }
 
 .donation-form {
   display: grid;
-  gap: 16px;
+  gap: 14px;
 }
 
 label,
@@ -123,25 +121,44 @@ label,
 
 label,
 legend {
-  color: #27362d;
-  font-weight: 800;
+  color: #1b1b1b;
+  font-weight: 700;
 }
 
 input,
 textarea {
-  background: white;
-  border: 1px solid #cdd8d0;
+  background: #ffffff;
+  border: 1px solid #cfcfcf;
   border-radius: 8px;
-  color: #17211b;
+  color: #111111;
   outline: none;
   padding: 12px 14px;
   width: 100%;
 }
 
+input::placeholder,
+textarea::placeholder {
+  color: #7a7a7a;
+  font-weight: 500;
+}
+
 input:focus,
 textarea:focus {
-  border-color: #22624a;
-  box-shadow: 0 0 0 3px rgba(34, 98, 74, 0.16);
+  border-color: #111111;
+  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.12);
+}
+
+input:disabled {
+  background: #eeeeee;
+  color: #777777;
+  cursor: not-allowed;
+}
+
+textarea {
+  line-height: 1.55;
+  min-height: 86px;
+  overflow: hidden;
+  resize: none;
 }
 
 .preset-grid {
@@ -162,46 +179,76 @@ textarea:focus {
   justify-content: center;
   min-height: 46px;
   padding: 0 16px;
+  text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .preset-grid button {
-  background: #eef4ef;
-  border: 1px solid #cdd8d0;
-  color: #26362d;
-  font-weight: 800;
+  background: #f5f5f5;
+  border: 1px solid #d4d4d4;
+  color: #191919;
+  font-weight: 700;
 }
 
 .preset-grid button.selected {
-  background: #22624a;
-  border-color: #22624a;
-  color: white;
+  background: #111111;
+  border-color: #111111;
+  color: #ffffff;
+  font-weight: 800;
 }
 
 .amount-note,
 .muted {
-  color: #647066;
+  color: #666666;
   margin: 0;
 }
 
+.amount-note {
+  color: #777777;
+  font-size: 0.92rem;
+}
+
+.checkbox-row {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  line-height: 1.4;
+  margin-top: -2px;
+}
+
+.checkbox-row input {
+  accent-color: #111111;
+  flex: 0 0 auto;
+  height: 18px;
+  margin: 0;
+  width: 18px;
+}
+
+.checkbox-row span {
+  font-weight: 600;
+  min-width: 0;
+}
+
 .primary-button {
-  background: #22624a;
-  border: 1px solid #22624a;
-  color: white;
-  font-weight: 900;
+  background: #111111;
+  border: 1px solid #111111;
+  color: #ffffff;
+  font-weight: 800;
 }
 
 .secondary-button {
-  background: #17211b;
-  border: 1px solid #17211b;
-  color: white;
-  font-weight: 900;
+  background: #111111;
+  border: 1px solid #111111;
+  color: #ffffff;
+  font-weight: 800;
 }
 
 .text-button {
   background: transparent;
-  border: 1px solid #cdd8d0;
-  color: #26362d;
-  font-weight: 800;
+  border: 1px solid #cfcfcf;
+  color: #191919;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 button:disabled {
@@ -209,51 +256,124 @@ button:disabled {
   opacity: 0.68;
 }
 
+.text-button.disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+  pointer-events: none;
+}
+
 .payment-view {
   align-content: start;
   display: grid;
-  gap: 18px;
+  gap: 16px;
   justify-items: center;
+}
+
+.thank-you-view {
+  align-content: start;
+  display: grid;
+  gap: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.success-mark {
+  align-items: center;
+  border: 3px solid #111111;
+  border-radius: 999px;
+  color: #111111;
+  display: inline-flex;
+  height: 148px;
+  justify-content: center;
+  opacity: 0.08;
+  position: absolute;
+  right: -24px;
+  top: -22px;
+  transform: rotate(-12deg);
+  width: 148px;
+  z-index: 0;
+}
+
+.success-mark svg {
+  height: 78px;
+  width: 78px;
+}
+
+.thank-you-copy {
+  display: grid;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.thank-you-copy p {
+  color: #4f4f4f;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.success-badge {
+  align-items: center;
+  background: #f3f3f3;
+  border: 1px solid #d9d9d9;
+  border-radius: 999px;
+  color: #111111;
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 800;
+  gap: 7px;
+  justify-self: start;
+  letter-spacing: 0;
+  line-height: 1;
+  padding: 8px 10px;
+  text-transform: uppercase;
+}
+
+.success-badge svg {
+  flex: 0 0 auto;
 }
 
 .status-pill {
   align-items: center;
-  background: #eef4ef;
+  background: #f1f1f1;
   border-radius: 8px;
-  color: #22624a;
+  color: #111111;
   display: inline-flex;
-  font-weight: 900;
+  font-size: 0.95rem;
+  font-weight: 800;
   gap: 8px;
-  padding: 10px 12px;
+  padding: 8px 11px;
+  text-align: center;
 }
 
 .status-pill.paid {
-  background: #e2f7e9;
-  color: #176336;
+  background: #111111;
+  color: #ffffff;
 }
 
 .status-pill.expired,
 .status-pill.failed,
 .status-pill.cancelled {
-  background: #f9e8df;
-  color: #9f3f20;
+  background: #e9e9e9;
+  color: #111111;
 }
 
 .qr-box {
   align-items: center;
   aspect-ratio: 1;
-  background: white;
-  border: 1px solid #dbe4dd;
+  background: #ffffff;
+  border: 1px solid #d7d7d7;
   border-radius: 8px;
   display: flex;
   justify-content: center;
-  max-width: 320px;
-  padding: 18px;
+  max-width: 300px;
+  padding: 16px;
   width: 100%;
 }
 
 .qr-box img {
   display: block;
+  height: auto;
   width: 100%;
 }
 
@@ -264,12 +384,36 @@ button:disabled {
   width: 100%;
 }
 
+.thank-you-meta {
+  background: #f5f5f5;
+  border: 1px solid #dedede;
+  border-radius: 8px;
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+
+.thank-you-view .primary-button {
+  position: relative;
+  z-index: 1;
+}
+
 .payment-meta span {
-  color: #647066;
+  color: #666666;
   font-size: 0.9rem;
 }
 
-.payment-meta strong {
+.thank-you-meta span {
+  color: #666666;
+  font-size: 0.9rem;
+}
+
+.payment-meta strong,
+.thank-you-meta strong {
+  font-weight: 800;
   overflow-wrap: anywhere;
 }
 
@@ -281,12 +425,13 @@ button:disabled {
 }
 
 .error-text {
-  background: #fff3ed;
-  border: 1px solid #f4c6b2;
+  background: #f5f5f5;
+  border: 1px solid #bdbdbd;
   border-radius: 8px;
-  color: #9f3f20;
+  color: #111111;
   margin: 0;
   padding: 10px 12px;
+  overflow-wrap: anywhere;
 }
 
 .spin {
@@ -312,6 +457,10 @@ button:disabled {
   .intro {
     padding-right: 0;
   }
+
+  .lead {
+    margin: 18px 0;
+  }
 }
 
 @media (max-width: 460px) {
@@ -320,12 +469,29 @@ button:disabled {
   }
 
   .donation-form,
-  .payment-view {
+  .payment-view,
+  .thank-you-view {
     padding: 16px;
   }
 
   .preset-grid,
   .action-row {
     grid-template-columns: 1fr;
+  }
+
+  h1 {
+    font-size: clamp(1.9rem, 12vw, 2.7rem);
+  }
+
+  .trust-row {
+    gap: 8px;
+  }
+
+  .trust-row span,
+  .preset-grid button,
+  .secondary-button,
+  .text-button,
+  .primary-button {
+    width: 100%;
   }
 }
