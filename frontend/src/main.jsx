@@ -76,8 +76,14 @@ function App() {
 
   async function createDonation(event) {
     event.preventDefault();
-    setLoading(true);
     setError("");
+
+    if (selectedAmount < MIN_DONATION_AMOUNT) {
+      setError(`Minimal donasi ${formatRupiah(MIN_DONATION_AMOUNT)}.`);
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/v2/donations`, {
@@ -280,7 +286,7 @@ function AmountPicker({ form, setForm, selectedAmount }) {
       </div>
       <input
         inputMode="numeric"
-        min="1000"
+        min={MIN_DONATION_AMOUNT}
         onChange={(event) => setForm({ ...form, customAmount: event.target.value.replace(/\D/g, "") })}
         placeholder="Masukkan nominal lain"
         value={form.customAmount}
