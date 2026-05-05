@@ -7,15 +7,16 @@ import "./styles.css";
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 const MIN_DONATION_AMOUNT = 1000;
 const PRESET_AMOUNTS = [10000, 25000, 50000, 100000];
+const INITIAL_FORM = {
+  amount: PRESET_AMOUNTS[1],
+  customAmount: "",
+  donor_name: "",
+  isAnonymous: false,
+  message: ""
+};
 
 function App() {
-  const [form, setForm] = useState({
-    amount: PRESET_AMOUNTS[1],
-    customAmount: "",
-    donor_name: "",
-    isAnonymous: false,
-    message: ""
-  });
+  const [form, setForm] = useState(INITIAL_FORM);
   const messageRef = useRef(null);
   const [payment, setPayment] = useState(null);
   const [qrPreviewDataUrl, setQrPreviewDataUrl] = useState("");
@@ -134,6 +135,7 @@ function App() {
   }
 
   function resetDonation() {
+    setForm(INITIAL_FORM);
     setPayment(null);
     setQrPreviewDataUrl("");
     setQrDownloadDataUrl("");
@@ -157,6 +159,14 @@ function App() {
     });
   }
 
+  function updateAmount(nextForm) {
+    const custom = Number(nextForm.customAmount);
+    const nextAmount = custom > 0 ? Math.round(custom) : nextForm.amount;
+
+    setForm(nextForm);
+    if (error && nextAmount >= MIN_DONATION_AMOUNT) setError("");
+  }
+
   return (
     <main className="page-shell">
       <section className="donation-panel">
@@ -174,7 +184,7 @@ function App() {
 
         {!payment ? (
           <form className="donation-form" onSubmit={createDonation}>
-            <AmountPicker form={form} setForm={setForm} selectedAmount={selectedAmount} />
+            <AmountPicker form={form} setForm={updateAmount} />
             <label>
               Nama
               <input
@@ -202,6 +212,7 @@ function App() {
                 placeholder="Tulis pesan singkat"
                 maxLength={240}
                 rows={2}
+                spellCheck={false}
               />
             </label>
             {error ? <p className="error-text">{error}</p> : null}
@@ -268,7 +279,7 @@ function ThankYouView({ onReset, payment }) {
   );
 }
 
-function AmountPicker({ form, setForm, selectedAmount }) {
+function AmountPicker({ form, setForm }) {
   return (
     <fieldset className="amount-picker">
       <legend>Nominal</legend>
