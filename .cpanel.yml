@@ -1,25 +1,14 @@
-# .cpanel.yml - Auto Deployment Template
-# Letakkan file ini di ROOT direktori repositori (sejajar dengan folder 'server' dan 'app')
+# .cpanel.yml - Auto Deployment Template untuk backend API.
+# Frontend donation.xnv.my.id dibuild terpisah dari folder frontend/dist.
 
 deployment:
   tasks:
-    # 1. Tentukan path tujuan (Ganti USERNAME_CPANEL dan FOLDER_APLIKASI)
     - export DEPLOYPATH=/home/arjawamy/api.xnv.biz.id
 
-    # 2. Buat direktori jika belum ada
     - /bin/mkdir -p $DEPLOYPATH
 
-    # 3. Salin isi folder server ke direktori tujuan
-    # Menggunakan -u (update) agar hanya menyalin file yang berubah
-    - /bin/cp -R * $DEPLOYPATH/
+    # Salin backend dan dokumentasi. node_modules/frontend/dist tidak perlu ikut repo deploy.
+    - /bin/cp -R index.js package.json src docs README.md .env.example $DEPLOYPATH/
 
-    # 4. Pastikan file package.json dan app.js berada di root DEPLOYPATH
-    # - /bin/cp server/package.json $DEPLOYPATH/
-    # - /bin/cp server/app.js $DEPLOYPATH/
-
-    # 5. Opsional: Berikan izin akses (Permission) jika diperlukan
-    # - /bin/chmod 755 $DEPLOYPATH
-    # - /bin/chmod 644 $DEPLOYPATH/database.sqlite (Jika database sudah ada)
-
-    # Catatan: Setelah deploy, Anda harus masuk ke menu "Setup Node.js App" 
+    # Catatan: Setelah deploy, masuk ke menu "Setup Node.js App"
     # di cPanel untuk menjalankan "Run NPM Install" dan "Restart Application".
