@@ -7,6 +7,7 @@ import "./styles.css";
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 const MIN_DONATION_AMOUNT = 1000;
 const PRESET_AMOUNTS = [10000, 25000, 50000, 100000];
+const STORED_PAYMENT_KEY = "xnv-donation-pending-payment";
 const INITIAL_FORM = {
   amount: PRESET_AMOUNTS[1],
   customAmount: "",
@@ -18,7 +19,7 @@ const INITIAL_FORM = {
 function App() {
   const [form, setForm] = useState(INITIAL_FORM);
   const messageRef = useRef(null);
-  const [payment, setPayment] = useState(null);
+  const [payment, setPayment] = useState(() => loadStoredPayment());
   const [qrPreviewDataUrl, setQrPreviewDataUrl] = useState("");
   const [qrDownloadDataUrl, setQrDownloadDataUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -72,6 +73,15 @@ function App() {
   }, [payment?.order_id, payment?.status]);
 
   useEffect(() => {
+    if (payment?.status === "pending") {
+      storePayment(payment);
+      return;
+    }
+
+    clearStoredPayment();
+  }, [payment]);
+
+  useEffect(() => {
     resizeMessageField();
   }, [form.message]);
 
@@ -102,6 +112,7 @@ function App() {
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "Donasi belum bisa dibuat.");
 
+      storePayment(result);
       setPayment(result);
     } catch (caughtError) {
       setError(caughtError.message);
@@ -126,7 +137,12 @@ function App() {
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "Status donasi belum bisa dicek.");
 
-      setPayment((current) => ({ ...current, ...result }));
+      setPayment((current) => {
+        const nextPayment = { ...current, ...result };
+        if (nextPayment.status === "pending") storePayment(nextPayment);
+        else clearStoredPayment();
+        return nextPayment;
+      });
     } catch (caughtError) {
       if (!options.quiet) setError(caughtError.message);
     } finally {
@@ -141,6 +157,7 @@ function App() {
     setQrDownloadDataUrl("");
     setChecking(false);
     setError("");
+    clearStoredPayment();
   }
 
   function resizeMessageField() {
@@ -448,6 +465,53 @@ function fitText(ctx, text, x, y, maxWidth) {
     clipped = clipped.slice(0, -1);
   }
   ctx.fillText(`${clipped}...`, x, y);
+}
+
+function loadStoredPayment() {
+  try {
+    const rawPayment = window.localStorage.getItem(STORED_PAYMENT_KEY);
+    if (!rawPayment) return null;
+
+    const storedPayment = JSON.parse(rawPayment);
+    if (!storedPayment?.order_id || storedPayment.status !== "pending") {
+      clearStoredPayment();
+      return null;
+    }
+
+    if (isExpiredPayment(storedPayment)) {
+      clearStoredPayment();
+      return null;
+    }
+
+    return storedPayment;
+  } catch {
+    clearStoredPayment();
+    return null;
+  }
+}
+
+function storePayment(payment) {
+  if (!payment?.order_id || payment.status !== "pending") return;
+
+  try {
+    window.localStorage.setItem(STORED_PAYMENT_KEY, JSON.stringify(payment));
+  } catch {
+    // Storage can be unavailable in private browsing or strict browser modes.
+  }
+}
+
+function clearStoredPayment() {
+  try {
+    window.localStorage.removeItem(STORED_PAYMENT_KEY);
+  } catch {
+    // Ignore storage failures; donation state still works for the current page.
+  }
+}
+
+function isExpiredPayment(payment) {
+  if (!payment?.expires_at) return false;
+  const expiresAt = new Date(payment.expires_at).getTime();
+  return Number.isFinite(expiresAt) && expiresAt <= Date.now();
 }
 
 function formatRupiah(value) {
