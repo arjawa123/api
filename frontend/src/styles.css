@@ -450,25 +450,59 @@ button:disabled {
 @media (max-width: 860px) {
   .page-shell {
     align-items: stretch;
-    padding: 18px;
+    padding: 24px 18px;
   }
 
   .donation-panel {
+    gap: 22px;
     grid-template-columns: 1fr;
+    max-width: 560px;
   }
 
   .intro {
     padding-right: 0;
   }
 
+  .eyebrow {
+    font-size: 0.76rem;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-size: clamp(2.35rem, 8vw, 3.05rem);
+    line-height: 1.06;
+    max-width: 620px;
+  }
+
   .lead {
-    margin: 18px 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 16px 0 18px;
+  }
+
+  .trust-row {
+    gap: 9px;
+  }
+
+  .trust-row span {
+    gap: 7px;
+    padding: 9px 11px;
+  }
+
+  .donation-form,
+  .payment-view,
+  .thank-you-view {
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.06);
   }
 }
 
 @media (max-width: 460px) {
   .page-shell {
-    padding: 12px;
+    padding: 18px 12px;
+  }
+
+  .donation-panel {
+    gap: 18px;
   }
 
   .donation-form,
@@ -483,11 +517,40 @@ button:disabled {
   }
 
   h1 {
-    font-size: clamp(1.9rem, 12vw, 2.7rem);
+    font-size: clamp(2.05rem, 11vw, 2.45rem);
+    line-height: 1.07;
+  }
+
+  h2 {
+    font-size: clamp(1.65rem, 9vw, 2rem);
+  }
+
+  .lead {
+    font-size: 0.96rem;
+    line-height: 1.58;
+  }
+
+  input,
+  textarea {
+    padding: 11px 13px;
+  }
+
+  textarea {
+    min-height: 78px;
+  }
+
+  .preset-grid button,
+  .secondary-button,
+  .text-button,
+  .primary-button {
+    min-height: 44px;
+    padding: 0 14px;
   }
 
   .trust-row {
     gap: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 
   .trust-row span,
