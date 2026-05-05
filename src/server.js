@@ -75,3 +75,5 @@ export function startServer() {
     console.log(`Donation API is running on port ${config.port}`);
   });
 }
+
+export default createApp();
